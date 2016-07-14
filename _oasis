@@ -1,0 +1,30 @@
+OASISFormat:     0.4
+OCamlVersion:    >= 4.02.0
+Name:            ocaml-z3
+Version:         1.0.0
+Synopsis:        Bindings for Z3
+Authors:         Samuel Baxter, Arjun Guha, Rachit Nigam, Robert Powers
+License:         LGPL
+Plugins:         META (0.4), DevFiles (0.4)
+BuildTools:      ocamlbuild, camlp4, ocamldoc
+AlphaFeatures:   ocamlbuild_more_args
+XOCamlbuildExtraArgs: -cflags -w,-40,-short-paths
+
+Library z3
+  Path: lib
+  BuildDepends:
+    ppx_deriving.std,
+    ppx_jane
+  InternalModules:
+    Smtlib_syntax,
+    Smtlib_parser,
+    Smtlib_lexer
+  Modules:
+    Smtlib
+
+Document doc
+  Title: ocaml-z3 documentation
+  Type: ocamlbuild (0.4)
+  XOCamlBuildPath: lib
+  XOCamlBuildModules:
+    Smtlib
