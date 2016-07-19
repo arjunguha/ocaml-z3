@@ -54,6 +54,15 @@ val declare_sort : solver -> identifier -> int -> unit
 (** [assert_ solver term] runs the command [(assert term)] *)
 val assert_ : solver -> term -> unit
 
+(** [assert_soft solver term ?~weight ?~id] runs the command [(assert-soft term :weight ~weight :id ~id] *)
+val assert_soft : solver -> ?weight:int -> ?id:string -> term -> unit
+
+(** [maximize solver e] runs the command [(maximize e)] *)
+val maximize : solver -> term -> unit
+
+(** [minimize solver e] runs the command [(minimize e)] *)
+val minimize : solver -> term -> unit
+
 (** [check_sat solver] runs the command [(check-sat)] *)
 val check_sat : solver -> check_sat_result
 

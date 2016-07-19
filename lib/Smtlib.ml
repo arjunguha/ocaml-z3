@@ -38,6 +38,8 @@ let read (solver : solver) : sexp =
 
 let command (solver : solver) (sexp : sexp) = write solver sexp; read solver
 
+let silent_command (solver : solver) (sexp : sexp) = write solver sexp
+
 let print_success_command =
   SList [SSymbol "set-option"; SKeyword ":print-success"; SSymbol "true"]
 
@@ -182,13 +184,39 @@ let declare_sort (solver : solver) (id : identifier) (arity : int) : unit =
 let assert_ (solver : solver) (term : term) : unit =
   expect_success solver (SList [SSymbol "assert"; term_to_sexp term])
 
-let check_sat (solver : solver) : check_sat_result =
-  match command solver (SList [SSymbol "check-sat"]) with
-  | SSymbol "sat" -> Sat
-  | SSymbol "unsat" -> Unsat
-  | SSymbol "unknown" -> Unknown
-  | sexp -> failwith ("unexpected result from (check-sat), got " ^
-                      sexp_to_string sexp)
+let assert_soft (solver : solver) ?weight:(weight = 1) ?id:(id = "") (term : term) : unit =
+  let id_suffix = match id with
+    | "" -> []
+    | _ -> [SKeyword ":id"; SSymbol id] in
+  let sexp =
+    (SList ([SSymbol "assert-soft"; term_to_sexp term; SKeyword ":weight"; SInt weight] @ id_suffix)) in
+  silent_command solver sexp
+
+let maximize (solver : solver) (term : term) : unit =
+  silent_command solver (SList ([SSymbol "maximize"; term_to_sexp term]))
+
+let minimize (solver : solver) (term : term) : unit =
+  silent_command solver (SList ([SSymbol "minimize"; term_to_sexp term]))
+
+let rec check_sat (solver : solver) : check_sat_result =
+  let fail sexp  = failwith ("unexpected result from (check-sat), got " ^
+                       sexp_to_string sexp) in
+  let rec read_sat sexp =
+    let match_map () = match read solver with
+      | SInt n ->
+        read_sat @@ read solver
+      | sexp ->
+        fail sexp in
+    match sexp with
+    | SSymbol "sat" -> Sat
+    | SSymbol "unsat" -> Unsat
+    | SSymbol "unknown" -> Unknown
+    | SSymbol "|->" -> match_map ()
+    | SSymbol sym -> read_sat @@ read solver
+    | SList sexp -> read_sat @@ read solver
+    | sexp -> failwith ("unexpected result from (check-sat), got " ^
+                        sexp_to_string sexp) in
+  read_sat @@ command solver (SList [SSymbol "check-sat"])
 
 let get_model (solver : solver) : (identifier * term) list =
   let rec read_model sexp = match sexp with
