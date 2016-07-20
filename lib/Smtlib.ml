@@ -47,17 +47,27 @@ let print_success_command =
    FDs when the solvers exit *)
 let _solvers : (int * solver) list ref = ref []
 
-let handle_sigchild (_ : int) : unit =
-  let open Printf in
-  let (pid, status) = Unix.waitpid [] (-1) in
-  eprintf "solver child (pid %d) exited\n%!" pid;
-  try
-    let solver = List.assoc pid !_solvers in
-    close_in_noerr solver.stdout; close_out_noerr solver.stdin
-  with
-    _ -> ()
+module StringMap = Map.Make(String)
 
-let () = Sys.set_signal Sys.sigchld (Sys.Signal_handle handle_sigchild)
+let _names :  (solver * int StringMap.t ref) list ref = ref []
+
+let handle_sigchild (_ : int) : unit =
+  if List.length !_solvers = 0
+  then ignore @@ Unix.waitpid [] (-1)
+  else
+    begin
+      let open Printf in
+      let (pid, status) = Unix.waitpid [] (-1) in
+      eprintf "solver child (pid %d) exited\n%!" pid;
+      try
+        let solver = List.assoc pid !_solvers in
+        close_in_noerr solver.stdout; close_out_noerr solver.stdin
+      with
+        _ -> ()
+    end
+
+let () =
+  Sys.set_signal Sys.sigchld (Sys.Signal_handle handle_sigchild)
 
 let make_solver (z3_path : string) : solver =
   let open Unix in
@@ -75,6 +85,7 @@ let make_solver (z3_path : string) : solver =
   set_binary_mode_in in_chan false;
   let solver = { stdin = out_chan; stdout = in_chan; stdout_lexbuf = Lexing.from_channel in_chan } in
   _solvers := (pid, solver) :: !_solvers;
+  _names := (solver, ref StringMap.empty) :: !_names;
   try
     match command solver print_success_command with
       | SSymbol "success" -> solver
@@ -99,19 +110,18 @@ let sexp_to_string (sexp : sexp) : string =
   to_string sexp;
   contents buf
 
-module StringMap = Map.Make(String)
-
-let (_names :  int StringMap.t ref) =
-  ref StringMap.empty
-
-let fresh_name (base : string) : sexp =
+let fresh_name (solver : solver) (base : string) : sexp =
+  let names =
+    try
+      List.assoc solver !_names
+    with _ -> failwith "Z3 instance doesn't have an associated fresh_name map" in
   try
-    let n = StringMap.find base !_names in
-    _names := StringMap.add base (n+1) !_names;
+    let n = StringMap.find base !names in
+    names := StringMap.add base (n+1) !names;
     SSymbol (base ^ (string_of_int n))
   with
     Not_found ->
-    _names := StringMap.add base 1 !_names;
+    names := StringMap.add base 1 !names;
     SSymbol (base ^ "0")
 
 type check_sat_result =
