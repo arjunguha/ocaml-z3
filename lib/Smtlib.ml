@@ -145,6 +145,40 @@ type term =
   | App of identifier * term list
   | Let of string * term * term [@@deriving sexp, compare]
 
+type tactic =
+  | Simplify
+  | SolveEQs
+  | BitBlast
+  | AIG
+  | SAT
+  | SMT
+  | QFBV
+  | UsingParams of tactic * (string * bool) list
+  | Then of tactic list
+
+let rec tactic_to_sexp (t : tactic) : sexp = match t with
+  | Simplify ->
+    SSymbol "simplify"
+  | SolveEQs ->
+    SSymbol "solve-eqs"
+  | BitBlast ->
+    SSymbol "bit-blast"
+  | AIG ->
+    SSymbol "aig"
+  | SAT ->
+    SSymbol "sat"
+  | SMT ->
+    SSymbol "smt"
+  | QFBV ->
+    SSymbol "qfbv"
+  | UsingParams (t', params) ->
+    let param_to_sexp (keyword, value) =
+      [ SKeyword keyword; SSymbol (string_of_bool value) ] in
+    SList ((SSymbol "using-params") :: (tactic_to_sexp t')
+           :: (List.concat @@ List.map param_to_sexp params))
+  | Then ts ->
+    SList ((SSymbol "then") :: List.map tactic_to_sexp ts)
+
 let id_to_sexp (id : identifier) : sexp = match id with
   | Id x -> SSymbol x
 
@@ -227,6 +261,27 @@ let rec check_sat (solver : solver) : check_sat_result =
     | sexp -> failwith ("unexpected result from (check-sat), got " ^
                         sexp_to_string sexp) in
   read_sat @@ command solver (SList [SSymbol "check-sat"])
+
+let rec check_sat_using (tactic : tactic) (solver : solver) : check_sat_result =
+  let fail sexp  = failwith ("unexpected result from (check-sat-using), got " ^
+                       sexp_to_string sexp) in
+  let rec read_sat sexp =
+    let match_map () = match read solver with
+      | SInt n ->
+        read_sat @@ read solver
+      | sexp ->
+        fail sexp in
+    match sexp with
+    | SSymbol "sat" -> Sat
+    | SSymbol "unsat" -> Unsat
+    | SSymbol "unknown" -> Unknown
+    | SSymbol "|->" -> match_map ()
+    | SSymbol sym -> read_sat @@ read solver
+    | SList sexp -> read_sat @@ read solver
+    | sexp -> failwith ("unexpected result from (check-sat-using), got " ^
+                        sexp_to_string sexp) in
+  let cmd = (SList [SSymbol "check-sat-using"; tactic_to_sexp tactic]) in
+  read_sat @@ command solver cmd
 
 let get_model (solver : solver) : (identifier * term) list =
   let rec read_model sexp = match sexp with
@@ -321,5 +376,7 @@ let bvnor = app2 "bvnor"
 let bvxnor = app2 "bvxnor"
 let bvudiv = app2 "bvudiv"
 let bvsdiv = app2 "bvsdiv"
+let bvugt = app2 "bvugt"
+let bvult = app2 "bvult"
 let bvneg = app1 "bvneg"
 let bvnot = app1 "bvnot"

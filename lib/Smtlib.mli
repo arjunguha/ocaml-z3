@@ -37,6 +37,19 @@ type term =
   | App of identifier * term list
   | Let of string * term * term [@@deriving sexp, compare]
 
+(** Tactics to configure z3's solver strategy. *)
+type tactic =
+  | Simplify
+  | SolveEQs
+  | BitBlast
+  | AIG
+  | SAT
+  | SMT
+  | QFBV
+  (** Tactic combinators *)
+  | UsingParams of tactic * (string * bool) list
+  | Then of tactic list
+
 type check_sat_result =
   | Sat
   | Unsat
@@ -66,6 +79,10 @@ val minimize : solver -> term -> unit
 (** [check_sat solver] runs the command [(check-sat)] *)
 val check_sat : solver -> check_sat_result
 
+(** [check_sat using tactic solver] runs the command
+    [(check-sat-using tactic)] *)
+val check_sat_using : tactic -> solver -> check_sat_result
+
 (** [get_model solver] runs the command [(get-model)] *)
 val get_model : solver -> (identifier * term) list
 
@@ -86,7 +103,6 @@ val bool_sort : sort
 
 (** [array_sort dom range] produces [(array dom range)] *)
 val array_sort : sort -> sort -> sort
-
 
 val int_to_term : int -> term
 
@@ -161,6 +177,8 @@ val bvnor : term -> term -> term
 val bvxnor : term -> term -> term
 val bvudiv : term -> term -> term
 val bvsdiv : term -> term -> term
+val bvugt : term -> term -> term
+val bvult : term -> term -> term
 val bvneg : term -> term
 val bvnot : term -> term
 
