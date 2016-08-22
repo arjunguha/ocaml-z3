@@ -123,6 +123,9 @@ val and_ : term -> term -> term
     to make debugging easier. *)
 val or_ : term -> term -> term
 
+(** [xor e1 e2] produces [(xor e1 e2)]. *)
+val xor : term -> term -> term
+
 (** [not e] produces [(not e)]. *)
 val not_ : term -> term
 

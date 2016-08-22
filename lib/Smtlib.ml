@@ -338,6 +338,12 @@ let or_ term1 term2 = match (term1, term2) with
   | (_, App (Id "or", alist2)) -> App (Id "or", term1 :: alist2)
   | _ -> App (Id "or", [term1; term2])
 
+let xor term1 term2 = match term1, term2 with
+  | (App (Id "xor", alist1), App (Id "xor", alist2)) -> App (Id "xor", alist1 @ alist2)
+  | (App (Id "xor", alist1), _) -> App (Id "xor", alist1 @ [ term2 ])
+  | (_, App (Id "xor", alist2)) -> App (Id "xor", term1 :: alist2)
+  | _ -> App (Id "xor", [term1; term2])
+
 let not_ term = App (Id "not", [term])
 
 let ite e1 e2 e3 = App (Id "ite", [e1; e2; e3])
