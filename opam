@@ -11,8 +11,8 @@ remove: [
   ["ocamlfind" "remove" "z3"]
 ]
 depends: [
-  "ocamlfind" {build}
-  "oasis" {build} >= "0.4.0"
+  "ocamlfind"       {build}
+  "oasis"           {build & >= "0.4.0"}
   "ppx_deriving"
   "ppx_jane"
 ]
