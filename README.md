@@ -3,11 +3,17 @@ ocaml-z3
 
 An OCaml interface to the Z3 SMT solver
 
-Temporary build steps
+Local build steps
 ---------------------
 
+This package depends on the ```oasis``` build system being installed on your machine.
+
 From the project's root directory:
- - ```ocamlbuild -use-ocamlfind -classic-display -pkg ppx_jane -pkg unix -tag debug -tag annot -tag bin_annot -tag short_paths lib/Smtlib.native```
+  ```
+  ./configure
+  make build
+  make install
+  ```
 
 
 Installation with OPAM
@@ -22,5 +28,6 @@ Installation with OPAM
 - From the command line, run:
 
   ```
-  opam pin add z3 https://github.com/plasma-umass/ocaml-z3.git
+  opam repository add plasma-opam https://github.com/plasma-umass/opam-repository.git
+  opam install ocaml-z3
   ```
