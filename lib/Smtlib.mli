@@ -185,7 +185,9 @@ val bvxnor : term -> term -> term
 val bvudiv : term -> term -> term
 val bvsdiv : term -> term -> term
 val bvugt : term -> term -> term
+val bvuge : term -> term -> term
 val bvult : term -> term -> term
+val bvule : term -> term -> term
 val bvneg : term -> term
 val bvnot : term -> term
 
