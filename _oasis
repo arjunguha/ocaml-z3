@@ -1,7 +1,7 @@
 OASISFormat:     0.4
 OCamlVersion:    >= 4.02.0
 Name:            ocaml-z3
-Version:         1.0.0
+Version:         1.0.1
 Synopsis:        Bindings for Z3
 Authors:         Samuel Baxter, Arjun Guha, Rachit Nigam, Robert Powers
 License:         LGPL

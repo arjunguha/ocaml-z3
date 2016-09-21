@@ -1,6 +1,6 @@
 # OASIS_START
-# DO NOT EDIT (digest: 484b079901153edefa6c8380189a2b9e)
-version = "1.0.0"
+# DO NOT EDIT (digest: e4f6d81ebb2bb5b6df09b046ab7d9be4)
+version = "1.0.1"
 description = "Bindings for Z3"
 requires = "ppx_deriving.std ppx_jane"
 archive(byte) = "z3.cma"
