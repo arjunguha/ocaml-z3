@@ -6,4 +6,5 @@ type sexp =
   | SString of string
   | SKeyword of string
   | SInt of int
-  | SBitVec of int * int [@@deriving sexp, compare]
+  | SBitVec of int * int
+  | SBitVec64 of int64 [@@deriving sexp, compare]

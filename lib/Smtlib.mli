@@ -33,6 +33,7 @@ type term =
   | String of string
   | Int of int
   | BitVec of int * int
+  | BitVec64 of int64
   | Const of identifier
   | App of identifier * term list
   | Let of string * term * term [@@deriving sexp, compare]
@@ -164,6 +165,9 @@ val bv_sort : int -> sort
 (** [bv n w] produces a bit-vector of width [w] that represents the integer [n]. *)
 val bv : int -> int -> term
 
+(** [bv64 n] produces a bit-vector of width [w] that represents the 64-bit integer [n]. *)
+val bv64 : int64 -> term
+
 val bvadd : term -> term -> term
 val bvsub : term -> term -> term
 val bvmul : term -> term -> term
@@ -195,6 +199,7 @@ type sexp = Smtlib_syntax.sexp =
   | SKeyword of string
   | SInt of int
   | SBitVec of int * int
+  | SBitVec64 of int64
 
 (** [command solver sexp] sends a command to the solver and reads a response. *)
 val command : solver -> sexp -> sexp

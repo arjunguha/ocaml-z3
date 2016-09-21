@@ -8,6 +8,7 @@ type solver = { stdin : out_channel; stdout : in_channel; stdout_lexbuf : Lexing
 let rec write_sexp (out_chan : out_channel) (e : sexp): unit = match e with
   | SInt n -> output_string out_chan (string_of_int n)
   | SBitVec (n, w) -> Printf.fprintf out_chan "(_ bv%d %d)" n w
+  | SBitVec64 n -> Printf.fprintf out_chan "(_ bv%Ld 64)" n
   | SSymbol str -> output_string out_chan str
   | SKeyword str -> output_string out_chan str
   | SString str ->
@@ -103,6 +104,7 @@ let sexp_to_string (sexp : sexp) : string =
     | SString x -> add_char buf '"'; add_string buf x; add_char buf '"'
     | SInt n -> add_string buf (string_of_int n)
     | SBitVec (n, w) -> add_string buf (Format.sprintf "(_ bv%d %d)" n w)
+    | SBitVec64 n -> add_string buf (Format.sprintf "(_ bv%Ld 64)" n)
   and list_to_string (alist : sexp list) : unit = match alist with
     | [] -> ()
     | [x] -> to_string x
@@ -141,6 +143,7 @@ type term =
   | String of string
   | Int of int
   | BitVec of int * int
+  | BitVec64 of int64
   | Const of identifier
   | App of identifier * term list
   | Let of string * term * term [@@deriving sexp, compare]
@@ -192,6 +195,7 @@ let rec term_to_sexp (term : term) : sexp = match term with
   | String s -> SString s
   | Int n -> SInt n
   | BitVec (n, w) -> SBitVec (n, w)
+  | BitVec64 n -> SBitVec64 n
   | Const x -> id_to_sexp x
   | App (f, args) -> SList (id_to_sexp f :: (List.map term_to_sexp args))
   | Let (x, term1, term2) ->
@@ -203,6 +207,7 @@ let rec sexp_to_term (sexp : sexp) : term = match sexp with
   | SString s -> String s
   | SInt n -> Int n
   | SBitVec (n, w) -> BitVec (n, w)
+  | SBitVec64 n -> BitVec64 n
   | SSymbol x -> Const (Id x)
   | _ -> failwith "unparsable term"
 
@@ -365,6 +370,8 @@ let lte = app2 "<="
 let gte = app2 ">="
 
 let bv n w = BitVec (n, w)
+
+let bv64 n = BitVec64 n
 
 let bvadd = app2 "bvadd"
 let bvsub = app2 "bvsub"
