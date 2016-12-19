@@ -209,6 +209,7 @@ let rec sexp_to_term (sexp : sexp) : term = match sexp with
   | SBitVec (n, w) -> BitVec (n, w)
   | SBitVec64 n -> BitVec64 n
   | SSymbol x -> Const (Id x)
+  | SList (SSymbol "-" :: SInt x :: []) -> Int (-x)
   | _ -> failwith "unparsable term"
 
 let expect_success (solver : solver) (sexp : sexp) : unit =
