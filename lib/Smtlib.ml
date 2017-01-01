@@ -248,6 +248,11 @@ let maximize (solver : solver) (term : term) : unit =
 let minimize (solver : solver) (term : term) : unit =
   silent_command solver (SList ([SSymbol "minimize"; term_to_sexp term]))
 
+let read_objectives (solver : solver) : unit =
+  match read solver with
+  | SList [SSymbol "objectives"; SList l] -> ()
+  | s -> failwith ("unexpected result in optimized objective, got " ^ sexp_to_string s)
+
 let rec check_sat (solver : solver) : check_sat_result =
   let fail sexp  = failwith ("unexpected result from (check-sat), got " ^
                        sexp_to_string sexp) in

@@ -77,6 +77,9 @@ val maximize : solver -> term -> unit
 (** [minimize solver e] runs the command [(minimize e)] *)
 val minimize : solver -> term -> unit
 
+(** [read_objectives solver] reads output of objective function printed after calls to [check_sat solver]  *)
+val read_objectives : solver -> unit
+
 (** [check_sat solver] runs the command [(check-sat)] *)
 val check_sat : solver -> check_sat_result
 

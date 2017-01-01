@@ -6,7 +6,7 @@ Synopsis:        Bindings for Z3
 Authors:         Samuel Baxter, Arjun Guha, Rachit Nigam, Robert Powers
 License:         LGPL
 Plugins:         META (0.4), DevFiles (0.4)
-BuildTools:      ocamlbuild, camlp4, ocamldoc
+BuildTools:      ocamlbuild, ocamldoc
 AlphaFeatures:   ocamlbuild_more_args
 XOCamlbuildExtraArgs: -cflags -w,-40,-short-paths
 
