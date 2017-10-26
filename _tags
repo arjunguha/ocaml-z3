@@ -1,5 +1,5 @@
 # OASIS_START
-# DO NOT EDIT (digest: 4c3f84d572cff067c5c883d72558ecf3)
+# DO NOT EDIT (digest: 4ea84ba84c73986ec0e7b7f8cd538590)
 # Ignore VCS directories, you can use the same kind of rule outside
 # OASIS_START/STOP if you want to exclude directories that contains
 # useless stuff for the build process
@@ -17,5 +17,4 @@ true: annot, bin_annot
 # Library z3
 "lib/z3.cmxs": use_z3
 <lib/*.ml{,i,y}>: package(ppx_deriving.std)
-<lib/*.ml{,i,y}>: package(ppx_jane)
 # OASIS_STOP
