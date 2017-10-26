@@ -1,5 +1,3 @@
-open Sexplib.Std
-
 include Smtlib_syntax
 
 type solver = { stdin : out_channel; stdout : in_channel; stdout_lexbuf : Lexing.lexbuf }
@@ -92,7 +90,7 @@ let make_solver (z3_path : string) : solver =
       | SSymbol "success" -> solver
       | _ -> failwith "could not configure solver to :print-success"
   with
-    Sys_error("Bad file descriptor") -> failwith "couldn't talk to solver, double-check path"
+    Sys_error ("Bad file descriptor") -> failwith "couldn't talk to solver, double-check path"
 
 let sexp_to_string (sexp : sexp) : string =
   let open Buffer in
@@ -132,7 +130,7 @@ type check_sat_result =
   | Unknown
 
 type identifier =
-  | Id of string [@@deriving sexp, compare]
+  | Id of string
 
 type sort =
   | Sort of identifier
@@ -146,7 +144,7 @@ type term =
   | BitVec64 of int64
   | Const of identifier
   | App of identifier * term list
-  | Let of string * term * term [@@deriving sexp, compare]
+  | Let of string * term * term
 
 type tactic =
   | Simplify

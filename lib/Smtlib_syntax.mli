@@ -5,4 +5,4 @@ type sexp =
   | SKeyword of string
   | SInt of int
   | SBitVec of int * int
-  | SBitVec64 of int64 [@@deriving sexp, compare]
+  | SBitVec64 of int64

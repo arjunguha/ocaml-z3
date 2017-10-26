@@ -1,7 +1,7 @@
 OASISFormat:     0.4
 OCamlVersion:    >= 4.02.0
 Name:            ocaml-z3
-Version:         1.0.1
+Version:         1.1.0
 Synopsis:        Bindings for Z3
 Authors:         Samuel Baxter, Arjun Guha, Rachit Nigam, Robert Powers
 License:         LGPL
@@ -13,8 +13,7 @@ XOCamlbuildExtraArgs: -cflags -w,-40,-short-paths
 Library z3
   Path: lib
   BuildDepends:
-    ppx_deriving.std,
-    ppx_jane
+    ppx_deriving.std
   InternalModules:
     Smtlib_syntax,
     Smtlib_parser,

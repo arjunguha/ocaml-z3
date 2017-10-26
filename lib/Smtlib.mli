@@ -20,9 +20,8 @@ val make_solver : string -> solver
  command, that error is raised as an OCaml exception.
 *)
 
-
 type identifier =
-  | Id of string [@@deriving sexp, compare]
+  | Id of string
 
 type sort =
   | Sort of identifier
@@ -36,7 +35,7 @@ type term =
   | BitVec64 of int64
   | Const of identifier
   | App of identifier * term list
-  | Let of string * term * term [@@deriving sexp, compare]
+  | Let of string * term * term
 
 (** Tactics to configure z3's solver strategy. *)
 type tactic =
