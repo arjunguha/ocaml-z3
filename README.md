@@ -28,6 +28,5 @@ Installation with OPAM
 - From the command line, run:
 
   ```
-  opam repository add plasma-opam https://github.com/plasma-umass/opam-repository.git
-  opam install ocaml-z3
+  opam pin add z3 https://github.com/plasma-umass/ocaml-z3.git
   ```
