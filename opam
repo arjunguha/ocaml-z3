@@ -5,6 +5,8 @@ maintainer: "Arjun Guha <arjun@cs.umass.edu>"
 build: [
   ["./configure" "--prefix" prefix ]
   [make]
+]
+install: [
   [make "install"]
 ]
 remove: [
